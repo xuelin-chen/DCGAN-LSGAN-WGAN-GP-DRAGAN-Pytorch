@@ -13,6 +13,7 @@ import tqdm
 import data
 import module
 
+# CUDA_VISIBLE_DEVICES=0 python3 train.py --dataset=custom --custom_dataroot ./data/car_renderings_baseline --updown_sampling 6 --epoch=200 --adversarial_loss_mode=gan --experiment_name car_dcgan
 
 # ==============================================================================
 # =                                   param                                    =
@@ -20,6 +21,9 @@ import module
 
 # command line
 py.arg('--dataset', default='fashion_mnist', choices=['cifar10', 'fashion_mnist', 'mnist', 'celeba', 'anime', 'custom'])
+py.arg('--custom_dataroot', default='./data', help='the data root in custom dataset mode')
+py.arg('--updown_sampling', type=int, default=6, help='3 for 32x32, 4 for 64x64, etc')
+py.arg('--im_size', type=int, default=256, help='image size')
 py.arg('--batch_size', type=int, default=64)
 py.arg('--epochs', type=int, default=25)
 py.arg('--lr', type=float, default=0.0002)
@@ -73,9 +77,9 @@ elif args.dataset == 'custom':
     # ======================================
     # =               custom               =
     # ======================================
-    img_paths = ...  # image paths of custom dataset
-    data_loader = data.make_custom_dataset(img_paths, args.batch_size, pin_memory=use_gpu)
-    n_G_upsamplings = n_D_downsamplings = ...  # 3 for 32x32 and 4 for 64x64
+    img_paths = py.glob(args.custom_dataroot, '*.png')  # image paths of custom dataset
+    data_loader, shape = data.make_custom_dataset(img_paths, args.batch_size, resize=args.im_size, pin_memory=use_gpu)
+    n_G_upsamplings = n_D_downsamplings = args.updown_sampling  # 3 for 32x32 and 4 for 64x64
     # ======================================
     # =               custom               =
     # ======================================

@@ -96,12 +96,12 @@ def make_anime_dataset(img_paths, batch_size, resize=64, drop_remainder=True, sh
 # =                               custom dataset                               =
 # ==============================================================================
 
-def make_custom_datset(img_paths, batch_size, resize=64, drop_remainder=True, shuffle=True, num_workers=4, pin_memory=False):
+def make_custom_dataset(img_paths, batch_size, resize=64, drop_remainder=True, shuffle=True, num_workers=4, pin_memory=False):
     transform = transforms.Compose([
         # ======================================
         # =               custom               =
         # ======================================
-        ...,  # custom preprocessings
+        #...,  # custom preprocessings
         # ======================================
         # =               custom               =
         # ======================================
