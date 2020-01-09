@@ -13,7 +13,13 @@ import tqdm
 import data
 import module
 
-# CUDA_VISIBLE_DEVICES=0 python3 train.py --dataset=custom --custom_dataroot ./data/car_renderings_baseline --updown_sampling 6 --epoch=200 --adversarial_loss_mode=gan --experiment_name car_dcgan
+# CUDA_VISIBLE_DEVICES=0 python3 train.py --dataset=custom --custom_dataroot ./data/car_renderings_baseline --updown_sampling 6 --im_size 256 --epoch=200 --adversarial_loss_mode=gan --batch_size 150 --experiment_name car_dcgan
+# CUDA_VISIBLE_DEVICES=1 python3 train.py --dataset=custom --custom_dataroot ./data/car_renderings_baseline --updown_sampling 6 --im_size 256 --epoch=200 --adversarial_loss_mode=lsgan --batch_size 150 --experiment_name car_lsgan
+# CUDA_VISIBLE_DEVICES=2 python3 train.py --dataset=custom --custom_dataroot ./data/car_renderings_baseline --updown_sampling 6 --im_size 256 --epoch=200 --adversarial_loss_mode=wgan --batch_size 110 --gradient_penalty_d_norm instance_norm --gradient_penalty_mode 1-gp --n_d 5 --experiment_name car_wgangp
+
+# CUDA_VISIBLE_DEVICES=3 python3 train.py --dataset=custom --custom_dataroot ./data/chair_renderings_baseline --updown_sampling 6 --im_size 256 --epoch=400 --adversarial_loss_mode=gan --batch_size 150 --experiment_name chair_dcgan
+# CUDA_VISIBLE_DEVICES=4 python3 train.py --dataset=custom --custom_dataroot ./data/chair_renderings_baseline --updown_sampling 6 --im_size 256 --epoch=400 --adversarial_loss_mode=lsgan --batch_size 150 --experiment_name chair_lsgan
+# CUDA_VISIBLE_DEVICES=5 python3 train.py --dataset=custom --custom_dataroot ./data/chair_renderings_baseline --updown_sampling 6 --im_size 256 --epoch=400 --adversarial_loss_mode=wgan --batch_size 110 --gradient_penalty_d_norm instance_norm --gradient_penalty_mode 1-gp --n_d 5 --experiment_name chair_wgangp
 
 # ==============================================================================
 # =                                   param                                    =
@@ -217,4 +223,10 @@ for ep_ in tqdm.trange(args.epochs, desc='Epoch Loop'):
                               'D_optimizer': D_optimizer.state_dict(),
                               'G_optimizer': G_optimizer.state_dict()},
                              py.join(ckpt_dir, 'Epoch_(%d).ckpt' % ep),
-                             max_keep=1)
+                             max_keep=1000)
+
+    if True:
+        x_fake = sample(z)
+        x_fake = np.transpose(x_fake.data.cpu().numpy(), (0, 2, 3, 1))
+        img = im.immerge(x_fake, n_rows=10).squeeze()
+        im.imwrite(img, py.join(sample_dir, 'epoch-%d.jpg' % ep))
